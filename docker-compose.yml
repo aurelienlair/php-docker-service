@@ -36,15 +36,15 @@ services:
 volumes:
   my-project-source:
     # specifies that this volume has been created outside of Compose and
-    # therefore should exist
-    external: true
+    # therefore should exist. Pay attention we are talking about the volume not the mount point!
+    external: false
     driver: local
     driver_opts:
       # eventually you can replace this by using a specific filesystem (cifs, nfs, ext4 ...)
       type: none
       # binding the project directory to the container one
       o: bind
-      # project path
+      # project path, replace by the once of your choice
       device: "/data/Projects/my-symfony-project"
 
 networks:
