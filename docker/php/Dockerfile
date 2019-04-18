@@ -3,6 +3,9 @@ FROM php:7.2.8-fpm-alpine
 USER root
 
 RUN apk add --no-cache \
+        autoconf \
+        g++ \
+        make \
         git \
         icu-dev \
         libmemcached-libs \
