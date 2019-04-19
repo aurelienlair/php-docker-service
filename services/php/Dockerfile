@@ -1,4 +1,4 @@
-FROM php:7.2.8-fpm-alpine
+FROM php:7.3.4-fpm-alpine
 
 USER root
 
@@ -10,26 +10,26 @@ RUN apk add --no-cache \
         icu-dev \
         libmemcached-libs \
         zlib-dev \
-    && apk add --no-cache --virtual .ext-build-deps \
+        libzip-dev \
+    # --no-cache skips the cache locally
+    # --virtual creates virtual packages with dependencies
+    # .build-deps is the name of the package you are creating
+    && apk add --no-cache --virtual .build-deps \
         libmemcached-dev \
-                    
     && pecl install -o \
         memcached-3.1.3 \
     && docker-php-ext-enable \
         memcached \
     && docker-php-ext-install -j5 \
-        intl \
-        opcache \
-        zip \
-	&& pecl install xdebug \
+        intl opcache zip \
+    #  install all required dependencies
+    && pecl install -o xdebug \
     && docker-php-ext-enable xdebug \
-	&& apk del .xdebug-build-deps \
     && pecl clear-cache \
-                    
-	&& docker-php-source delete \
-    && apk del .ext-build-deps
+    && docker-php-source delete \
+    && apk del .build-deps
 
-COPY xdebug/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY services/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 WORKDIR /var/www/my-project
 
@@ -39,12 +39,13 @@ RUN adduser -D -u 1000 aurelien -G www-data \
     && chown -R aurelien /var/www/my-project \
     && curl -sS https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin --filename=composer \
-        --version 1.8.0
+        --version 1.8.5
 
 USER aurelien
 
-ARG $GITHUB_TOKEN
-                
+# run docker-compose build --build-arg GITHUB_TOKEN="XXXX"
+ARG GITHUB_TOKEN
+
 RUN composer config -g github-oauth.github.com $GITHUB_TOKEN \
     && composer global require \
         --no-suggest --no-interaction \

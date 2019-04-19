@@ -7,19 +7,25 @@ services:
       # the build context files are located in the current directory and will be sent to the Docker daemon during the build
       context: .
       # location of PHP container's Dockerfile 
-      dockerfile: ./docker/php/Dockerfile
+      dockerfile: ./services/php/Dockerfile
     # this option will restart the container unless it is explicitly stopped or Docker itself is stopped or restarted
     restart: unless-stopped
     volumes:
       - 'my-project-source:/var/www/my-symfony-project'
     networks:
       - my-project-network
+    extra_hosts:
+      # this ip has to be added to PHPStorm in "Automatically detected IDE ip"
+      # it adds: 172.31.99.1     dockerhost
+      # on the /etc/hosts
+      # xxx.xxx.xxx.1 is recognize by Docker as a Gateway with host (PC)
+      - 'dockerhost:172.48.99.1'
 
   my-project-nginx:
     container_name: my-project-nginx-container
     build:
       context: .
-      dockerfile: ./docker/nginx/Dockerfile
+      dockerfile: ./services/nginx/Dockerfile
     restart: unless-stopped
     volumes:
       - 'my-project-source:/var/www/my-symfony-project'
