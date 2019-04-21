@@ -4,14 +4,18 @@ services:
   my-project-php:
     container_name: my-project-php-container 
     build:
-      # the build context files are located in the current directory and will be sent to the Docker daemon during the build
-      context: .
-      # location of PHP container's Dockerfile 
-      dockerfile: ./services/php/Dockerfile
+        # the build context files are located in the current directory and will be sent to the Docker daemon during the build
+        context: .
+        # location of PHP container's Dockerfile
+        dockerfile: ./services/php/Dockerfile
+        # read variables from .env
+        args:
+          GITHUB_TOKEN: ${GITHUB_TOKEN}
     # this option will restart the container unless it is explicitly stopped or Docker itself is stopped or restarted
     restart: unless-stopped
+    # feel free to add more PHP projects
     volumes:
-      - 'my-project-source:/var/www/my-symfony-project'
+      - '/home/aurelien/my-projects/my-project-source:/var/www/my-symfony-project'
     networks:
       - my-project-network
     extra_hosts:

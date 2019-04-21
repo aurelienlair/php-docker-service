@@ -47,12 +47,12 @@ RUN set -ex; \
 
 USER aurelien
 
-# run docker-compose build --build-arg GITHUB_TOKEN="XXXX"
+# Defined in .env file
 ARG GITHUB_TOKEN
 
 # Set -u : treat unset variables as an error when substituting
 RUN set -eux; \
-    composer config -g github-oauth.github.com $GITHUB_TOKEN \
+    composer config -g github-oauth.github.com ${GITHUB_TOKEN} \
     && composer global require \
         --no-suggest --no-interaction \
         hirak/prestissimo \
