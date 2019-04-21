@@ -1,0 +1,15 @@
+{
+  "name": "php-docker-services",
+  "authors": [
+    {
+      "name": "Aurélien Lair",
+      "email": "aurelien.lair@nomail.com"
+    }
+  ],
+  "description": "PHP Docker services ",
+  "type": "script",
+  "prefer-stable": true,
+  "require": {
+    "php": "^7.2"
+  }
+}
