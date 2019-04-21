@@ -2,7 +2,10 @@ FROM php:7.3.4-fpm-alpine
 
 USER root
 
-RUN apk add --no-cache \
+# Set -e : exit immediately if a command exits with a non-zero status
+# Set -x : print commands and their arguments as they are executed
+RUN set -ex; \
+    apk add --no-cache \
         autoconf \
         g++ \
         make \
@@ -33,7 +36,8 @@ COPY services/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 WORKDIR /var/www/my-project
 
-RUN adduser -D -u 1000 aurelien -G www-data \
+RUN set -ex; \
+    adduser -D -u 1000 aurelien -G www-data \
     && mkdir -p /home/aurelien \
     && chown -R aurelien /home/aurelien \
     && chown -R aurelien /var/www/my-project \
@@ -46,7 +50,9 @@ USER aurelien
 # run docker-compose build --build-arg GITHUB_TOKEN="XXXX"
 ARG GITHUB_TOKEN
 
-RUN composer config -g github-oauth.github.com $GITHUB_TOKEN \
+# Set -u : treat unset variables as an error when substituting
+RUN set -eux; \
+    composer config -g github-oauth.github.com $GITHUB_TOKEN \
     && composer global require \
         --no-suggest --no-interaction \
         hirak/prestissimo \
