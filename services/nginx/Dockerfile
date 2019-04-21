@@ -1,3 +1,3 @@
-FROM nginx:1.15.8
+FROM nginx:1.15.12
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY services/nginx/nginx.conf /etc/nginx/nginx.conf
