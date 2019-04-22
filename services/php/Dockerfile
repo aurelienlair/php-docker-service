@@ -51,7 +51,8 @@ USER aurelien
 ARG GITHUB_TOKEN
 
 # Set -u : treat unset variables as an error when substituting
-RUN set -eux; \
+# Removing -x option because we don't want to output sensible data such as the token
+RUN set -eu; \
     composer config -g github-oauth.github.com ${GITHUB_TOKEN} \
     && composer global require \
         --no-suggest --no-interaction \
