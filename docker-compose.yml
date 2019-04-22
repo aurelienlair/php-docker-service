@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     # feel free to add more PHP projects
     volumes:
-      - '/home/aurelien/my-projects/my-project-source:/var/www/my-symfony-project'
+      - my-project-source:/var/www/my-symfony-project
     networks:
       - my-project-network
     extra_hosts:
@@ -32,7 +32,7 @@ services:
       dockerfile: ./services/nginx/Dockerfile
     restart: unless-stopped
     volumes:
-      - 'my-project-source:/var/www/my-symfony-project'
+      - my-project-source:/var/www/my-symfony-project
     # TODO verify if this is useful
     # maps a port from the container to the host in the following manner: host:container
     #ports:
@@ -55,7 +55,7 @@ volumes:
       # binding the project directory to the container one
       o: bind
       # project path, replace by the once of your choice
-      device: "/data/Projects/my-symfony-project"
+      device: /data/Projects/my-symfony-project
 
 networks:
   my-project-network:
