@@ -34,13 +34,14 @@ RUN set -ex; \
 
 COPY services/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-WORKDIR /var/www/my-project
+WORKDIR /var/www
 
 RUN set -ex; \
-    adduser -D -u 1000 aurelien -G www-data \
+    adduser -D -u 1001 aurelien -G www-data \
     && mkdir -p /home/aurelien \
     && chown -R aurelien /home/aurelien \
-    && chown -R aurelien /var/www/my-project \
+    && chown -R aurelien /var/www/ \
+    && rm -rf /var/www/html \
     && curl -sS https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin --filename=composer \
         --version 1.8.5
