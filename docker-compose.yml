@@ -1,0 +1,67 @@
+version: '3.7'
+
+services:
+  my-project-php:
+    container_name: my-project-php-container 
+    build:
+        # the build context files are located in the current directory and will be sent to the Docker daemon during the build
+        context: .
+        # location of PHP container's Dockerfile
+        dockerfile: ./services/php/Dockerfile
+        # read variables from .env
+        args:
+          GITHUB_TOKEN: ${GITHUB_TOKEN}
+    # this option will restart the container unless it is explicitly stopped or Docker itself is stopped or restarted
+    restart: unless-stopped
+    # feel free to add more PHP projects
+    volumes:
+      - my-project-source:/var/www/my-symfony-project
+    networks:
+      - my-project-network
+    extra_hosts:
+      # this ip has to be added to PHPStorm in "Automatically detected IDE ip"
+      # it adds: 172.31.99.1     dockerhost
+      # on the /etc/hosts
+      # xxx.xxx.xxx.1 is recognize by Docker as a Gateway with host (PC)
+      - 'dockerhost:172.48.99.1'
+
+  my-project-nginx:
+    container_name: my-project-nginx-container
+    build:
+      context: .
+      dockerfile: ./services/nginx/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - my-project-source:/var/www/my-symfony-project
+    # TODO verify if this is useful
+    # maps a port from the container to the host in the following manner: host:container
+    #ports:
+    #  - '80:80'
+    depends_on:
+      - my-project-php
+    networks:
+      - my-project-network
+
+# mounts a linked path on the host machine that can be used by the container
+volumes:
+  my-project-source:
+    # specifies that this volume has been created outside of Compose and
+    # therefore should exist. Pay attention we are talking about the volume not the mount point!
+    external: false
+    driver: local
+    driver_opts:
+      # eventually you can replace this by using a specific filesystem (cifs, nfs, ext4 ...)
+      type: none
+      # binding the project directory to the container one
+      o: bind
+      # project path, replace by the once of your choice
+      device: /data/Projects/my-symfony-project
+
+networks:
+  my-project-network:
+    ipam:
+      # Default IP address management driver
+      driver: default
+      config:
+        # CIDR block for the project network
+        - subnet: 172.48.0.0/16
